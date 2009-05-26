@@ -5,6 +5,7 @@
 #include <sys/mman.h>
 #include <fcntl.h>
 #include <limits.h>
+#include <sched.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -81,6 +82,12 @@ int main(int argc, char *argv[]) {
 	/* We will need the pages immediately */
 	if (posix_madvise(map, SIZE, POSIX_MADV_RANDOM | POSIX_MADV_WILLNEED))
 		die("posix_madvise");
+
+	/* Set real-time scheduling policy */
+	struct sched_param param;
+	param.sched_priority = sched_get_priority_max(SCHED_FIFO);
+	if (sched_setscheduler(0, SCHED_FIFO, &param) == -1)
+		die("sched_setscheduler");
 
 	/* Wait for first key press */
 	readkey();
