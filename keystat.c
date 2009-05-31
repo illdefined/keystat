@@ -118,7 +118,7 @@ int main(int argc, char *argv[]) {
 			else if (diff < ntohl(cur->avg))
 				cur->avg = htonl(ntohl(cur->avg) - (ntohl(cur->avg) - diff) / ntohl(cur->num));
 
-#ifndef NDEBUG
+#ifdef DEBUG
 			printf("%hhu -> %hhu: %lums\n", ev[inv].code, ev[idx].code, diff);
 #endif
 		}
