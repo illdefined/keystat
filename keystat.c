@@ -110,7 +110,7 @@ int main(int argc, char *argv[]) {
 				return EXIT_SUCCESS;
 			}
 
-			cur->num = htonl(ntohl(cur->avg) + 1);
+			cur->num = htonl(ntohl(cur->num) + 1);
 
 			/* As we are using unsigned types, we have to differentiate */
 			if (diff > ntohl(cur->avg))
