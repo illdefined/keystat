@@ -9,20 +9,20 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 #include <linux/input.h>
 
-#define NUM (256 * 256)
+#define MAX 58
+#define NUM (MAX * MAX * MAX)
 #define SIZE (NUM * sizeof (struct Cell))
-
-#define inv (idx ? 0 : 1)
 
 #define readkey() \
 	do { \
 		if (read(ifd, ev + idx, sizeof (struct input_event)) < sizeof (struct input_event)) \
 			die("read"); \
-	} while (ev[idx].type != EV_KEY || ev[idx].value != 1 || ev[idx].code > 255);
+	} while (ev[idx].type != EV_KEY || ev[idx].value != 1);
 
 #pragma pack(push)
 #pragma pack(4)
@@ -38,16 +38,32 @@ static inline void die(const char *restrict str) {
 	exit(EXIT_FAILURE);
 }
 
+static inline uintmax_t add(uintmax_t sma, uintmax_t smb) {
+	/* Check for overflow */
+	if (UINTMAX_MAX - smb < sma)
+		return UINTMAX_MAX;
+	else
+		return sma + smb;
+}
+
+/* Time difference in microseconds */
+static inline uint32_t diff(const struct timeval *restrict min, const struct timeval *restrict sub) {
+	return (uint32_t)
+		add(((uintmax_t) min->tv_sec  - (uintmax_t) sub->tv_sec) * UINTMAX_C(1000000),
+			((uintmax_t) min->tv_usec - (uintmax_t) sub->tv_usec));
+}
+
 int main(int argc, char *argv[]) {
-	struct input_event ev[2];
+	struct input_event ev[3];
 	unsigned char idx = 0;
+	unsigned char fil = 0;
 
 	/* Check command-line arguments */
 	if (argc != 3) {
 		fprintf(stderr,
 			"Usage: %s [map] [device]\n\n"
 			"  This program measures the time difference between consecutive key events read\n"
-			"  from device and stores their average per key tuple in map.\n",
+			"  from device and stores their average per key triple in map.\n",
 			argv[0]);
 		return EXIT_FAILURE;
 	}
@@ -89,21 +105,24 @@ int main(int argc, char *argv[]) {
 	if (sched_setscheduler(0, SCHED_FIFO, &param) == -1)
 		die("sched_setscheduler");
 
-	/* Wait for first key press */
-	readkey();
-	idx = inv;
+	memset(ev, 0, sizeof ev);
 
 	for (;;) {
 		readkey();
 
-		uint32_t diff =
-			(ev[idx].time.tv_sec * 1000 + ev[idx].time.tv_usec / 1000) -
-			(ev[inv].time.tv_sec * 1000 + ev[inv].time.tv_usec / 1000);
+		/* Ignore differences larger than 300ms and invalid key codes */
+		if (ev[idx].code >= MAX ||
+			diff(&ev[idx].time, &ev[(idx + 2) % 3].time) > 300000)
+			fil = 0;
+		else if (fil < 3)
+			++fil;
 
-		/* Ignore differences larger than 300ms */
-		if (diff <= 300) {
+		if (fil == 3) {
 			/* Calculate offset and update average */
-			struct Cell *cur = map + ev[idx].code + ev[inv].code * 256;
+			struct Cell *cur = map
+				+ ev[idx].code
+				+ ev[(idx + 2) % 3].code * MAX
+				+ ev[(idx + 1) % 3].code * MAX * MAX;
 
 			if (ntohl(cur->num) == UINT32_MAX) {
 				puts("Enough data :-)");
@@ -112,18 +131,23 @@ int main(int argc, char *argv[]) {
 
 			cur->num = htonl(ntohl(cur->num) + 1);
 
+			uint32_t df =
+				diff(          &ev[idx].time, &ev[(idx + 2) % 3].time) +
+				diff(&ev[(idx + 2) % 3].time, &ev[(idx + 1) % 3].time);
+
 			/* As we are using unsigned types, we have to differentiate */
-			if (diff > ntohl(cur->avg))
-				cur->avg = htonl(ntohl(cur->avg) + (diff - ntohl(cur->avg)) / ntohl(cur->num));
-			else if (diff < ntohl(cur->avg))
-				cur->avg = htonl(ntohl(cur->avg) - (ntohl(cur->avg) - diff) / ntohl(cur->num));
+			if (df > ntohl(cur->avg))
+				cur->avg = htonl(ntohl(cur->avg) + (df - ntohl(cur->avg)) / ntohl(cur->num));
+			else if (df < ntohl(cur->avg))
+				cur->avg = htonl(ntohl(cur->avg) - (ntohl(cur->avg) - df) / ntohl(cur->num));
 
 #ifdef DEBUG
-			printf("%hhu -> %hhu: %lums\n", ev[inv].code, ev[idx].code, diff);
+			printf("%hu %hu %hu: %uus\n",
+				ev[(idx + 1) % 3].code, ev[(idx + 2) % 3].code, ev[idx].code, df);
 #endif
 		}
-		
-		idx = inv;
+
+		idx = (idx + 1) % 3;
 	}
 
 	return EXIT_SUCCESS;
