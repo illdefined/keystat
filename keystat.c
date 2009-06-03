@@ -18,12 +18,6 @@
 #define NUM (MAX * MAX * MAX)
 #define SIZE (NUM * sizeof (struct Cell))
 
-#define readkey() \
-	do { \
-		if (read(ifd, ev + idx, sizeof (struct input_event)) < sizeof (struct input_event)) \
-			die("read"); \
-	} while (ev[idx].type != EV_KEY || ev[idx].value != 1);
-
 #pragma pack(push)
 #pragma pack(4)
 struct Cell {
@@ -108,7 +102,10 @@ int main(int argc, char *argv[]) {
 	memset(ev, 0, sizeof ev);
 
 	for (;;) {
-		readkey();
+		do {
+			if (read(ifd, ev + idx, sizeof (struct input_event)) < sizeof (struct input_event))
+				die("read");
+		} while (ev[idx].type != EV_KEY || ev[idx].value != 1);
 
 		/* Ignore differences larger than 300ms and invalid key codes */
 		if (ev[idx].code >= MAX ||
