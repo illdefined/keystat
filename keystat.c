@@ -139,7 +139,7 @@ int main(int argc, char *argv[]) {
 				cur->avg = htonl(ntohl(cur->avg) - (ntohl(cur->avg) - df) / ntohl(cur->num));
 
 #ifdef DEBUG
-			printf("%hu %hu %hu: %uus\n",
+			printf("%.2hu %.2hu %.2hu: %uus\n",
 				ev[(idx + 1) % 3].code, ev[(idx + 2) % 3].code, ev[idx].code, df);
 #endif
 		}
