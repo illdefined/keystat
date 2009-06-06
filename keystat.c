@@ -99,8 +99,6 @@ int main(int argc, char *argv[]) {
 	if (sched_setscheduler(0, SCHED_FIFO, &param) == -1)
 		die("sched_setscheduler");
 
-	memset(ev, 0, sizeof ev);
-
 	for (;;) {
 		do {
 			if (read(ifd, ev + idx, sizeof (struct input_event)) < sizeof (struct input_event))
@@ -108,9 +106,10 @@ int main(int argc, char *argv[]) {
 		} while (ev[idx].type != EV_KEY || ev[idx].value != 1);
 
 		/* Ignore differences larger than 300ms and invalid key codes */
-		if (ev[idx].code >= MAX ||
-			diff(&ev[idx].time, &ev[(idx + 2) % 3].time) > 300000)
+		if (ev[idx].code >= MAX)
 			fil = 0;
+		else if (fil > 0 && diff(&ev[idx].time, &ev[(idx + 2) % 3].time) > 300000)
+				fil = 0;
 		else if (fil < 3)
 			++fil;
 
