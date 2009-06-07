@@ -32,19 +32,11 @@ static inline void die(const char *restrict str) {
 	exit(EXIT_FAILURE);
 }
 
-static inline uintmax_t add(uintmax_t sma, uintmax_t smb) {
-	/* Check for overflow */
-	if (UINTMAX_MAX - smb < sma)
-		return UINTMAX_MAX;
-	else
-		return sma + smb;
-}
-
 /* Time difference in microseconds */
 static inline uint32_t diff(const struct timeval *restrict min, const struct timeval *restrict sub) {
 	return (uint32_t)
-		add(((uintmax_t) min->tv_sec  - (uintmax_t) sub->tv_sec) * UINTMAX_C(1000000),
-			((uintmax_t) min->tv_usec - (uintmax_t) sub->tv_usec));
+		(((intmax_t) min->tv_sec  - (intmax_t) sub->tv_sec) * INTMAX_C(1000000) +
+		 ((intmax_t) min->tv_usec - (intmax_t) sub->tv_usec));
 }
 
 int main(int argc, char *argv[]) {
@@ -106,10 +98,8 @@ int main(int argc, char *argv[]) {
 		} while (ev[idx].type != EV_KEY || ev[idx].value != 1);
 
 		/* Ignore differences larger than 300ms and invalid key codes */
-		if (ev[idx].code >= MAX)
+		if (ev[idx].code >= MAX || (fil > 0 && diff(&ev[idx].time, &ev[(idx + 2) % 3].time) > 300000))
 			fil = 0;
-		else if (fil > 0 && diff(&ev[idx].time, &ev[(idx + 2) % 3].time) > 300000)
-				fil = 0;
 		else if (fil < 3)
 			++fil;
 
