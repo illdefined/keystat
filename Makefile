@@ -2,7 +2,12 @@ CC = clang
 DESTDIR = /
 PREFIX = usr
 
+all: keystat dump
+
 keystat: keystat.c
+	$(CC) $(CFLAGS) -std=c99 -o $@ $<
+
+dump: dump.c
 	$(CC) $(CFLAGS) -std=c99 -o $@ $<
 
 clean:
