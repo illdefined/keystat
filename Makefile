@@ -2,9 +2,9 @@ CC = clang
 DESTDIR = /
 PREFIX = usr
 
-all: keystat dump
+all: capture dump
 
-keystat: keystat.c
+capture: capture.c
 	$(CC) $(CFLAGS) -std=c99 -o $@ $<
 
 dump: dump.c
@@ -13,8 +13,10 @@ dump: dump.c
 clean:
 	rm -f keystat
 
-install: keystat
+install: all
 	install -d $(DESTDIR)$(PREFIX)/bin
-	install keystat $(DESTDIR)$(PREFIX)/bin
+	install -T capture $(DESTDIR)$(PREFIX)/bin/keystat-capture
+	install -T dump $(DESTDIR)$(PREFIX)/bin/keystat-dump
+	install -T device.sh $(DESTDIR)$(PREFIX)/bin/keystat-device
 
 .PHONY: clean install
