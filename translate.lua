@@ -6,9 +6,12 @@ f = io.open(headerfile)
 
 if not f then error("error opening file: '" .. headerfile .. "'") end
 
-dump = io.open(arg[1])
-
-if not dump then error("usage: " .. arg[-1] .. " " .. arg[0] .. " <filename>") end
+if arg[1] then
+	dump = io.open(arg[1])
+	if not dump then error("usage: " .. arg[-1] .. " " .. arg[0] .. " <filename>") end
+else
+	dump = io.stdin
+end
 
 t = {}
 
