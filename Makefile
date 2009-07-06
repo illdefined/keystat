@@ -18,5 +18,6 @@ install: all
 	install -T capture $(DESTDIR)$(PREFIX)/bin/keystat-capture
 	install -T dump $(DESTDIR)$(PREFIX)/bin/keystat-dump
 	install -T device.sh $(DESTDIR)$(PREFIX)/bin/keystat-device
+	install -T translate.lua $(DESTDIR)$(PREFIX)/bin/keystat-translate
 
 .PHONY: clean install
