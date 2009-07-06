@@ -1,3 +1,5 @@
+#!/usr/bin/env lua
+
 headerfile = "/usr/include/linux/input.h" 
 
 f = io.open(headerfile)
