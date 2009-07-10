@@ -11,7 +11,7 @@ dump: dump.c
 	$(CC) $(CFLAGS) -std=c99 -o $@ $<
 
 clean:
-	rm -f keystat
+	rm -f capture dump
 
 install: all
 	install -d $(DESTDIR)$(PREFIX)/bin
