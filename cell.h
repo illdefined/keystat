@@ -1,6 +1,6 @@
 #pragma once
-#ifndef KEYSTAT_H
-#define KEYSTAT_H
+#ifndef CELL_H
+#define CELL_H
 
 #include <stdint.h>
 

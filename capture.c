@@ -2,7 +2,6 @@
 #define _XOPEN_SOURCE 600
 
 #include <arpa/inet.h>
-#include <sys/mman.h>
 #include <fcntl.h>
 #include <limits.h>
 #include <sched.h>
@@ -12,13 +11,8 @@
 
 #include <linux/input.h>
 
-#include "keystat.h"
-
-/* Issue standard error message and terminate */
-static inline void die(const char *restrict str) {
-	perror(str);
-	exit(EXIT_FAILURE);
-}
+#include "cell.h"
+#include "map.h"
 
 /* Time difference in microseconds */
 static inline uint32_t diff(const struct timeval *restrict min, const struct timeval *restrict sub) {
@@ -48,30 +42,7 @@ int main(int argc, char *argv[]) {
 		die("open");
 
 	/* Open map file */
-	int mfd = open(argv[1], O_RDWR | O_CREAT, 0660);
-	if (mfd < 0)
-		die("open");
-
-	/* Truncate map file to the correct size */
-	if (ftruncate(mfd, SIZE))
-		die("ftruncate");
-
-	/* Allocate file space */
-	if (posix_fallocate(mfd, 0, SIZE))
-		die("posix_fallocate");
-
-	/* Memory-map it */
-	struct Cell *map = mmap((void *) 0, SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, mfd, 0);
-	if (map == MAP_FAILED)
-		die("mmap");
-
-	/* We do not need this anymore */
-	if (close(mfd))
-		die("close");
-
-	/* We will need the pages immediately */
-	if (posix_madvise(map, SIZE, POSIX_MADV_RANDOM | POSIX_MADV_WILLNEED))
-		die("posix_madvise");
+	struct Cell *map = map_open(argv[2], true, false);
 
 	/* Set real-time scheduling policy */
 	struct sched_param param;
