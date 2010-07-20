@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
 		die("open");
 
 	/* Open map file */
-	struct Cell *map = map_open(argv[2], true, false);
+	struct Cell *map = map_open(argv[1], true, false);
 
 	/* Set real-time scheduling policy */
 	struct sched_param param;
