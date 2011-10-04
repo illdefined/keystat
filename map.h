@@ -33,6 +33,10 @@ static struct Cell *map_open(const char *restrict path, bool rw, bool seq) {
 		die("open");
 
 	if (rw) {
+		/* Lock the file */
+		if (lockf(fd, F_TLOCK, SIZE))
+			die("lockf");
+
 		/* Truncate map file to the correct size */
 		if (ftruncate(fd, SIZE))
 			die("ftruncate");
@@ -52,10 +56,6 @@ static struct Cell *map_open(const char *restrict path, bool rw, bool seq) {
 	struct Cell *map = mmap((void *) 0, SIZE, rw ? PROT_READ | PROT_WRITE : PROT_READ, MAP_SHARED, fd, 0);
 	if (map == MAP_FAILED)
 		die("mmap");
-
-	/* We do not need this anymore */
-	if (close(fd))
-		die("close");
 
 	/* We will need the pages immediately */
 	if (posix_madvise(map, SIZE, seq ? POSIX_MADV_SEQUENTIAL | POSIX_MADV_WILLNEED : POSIX_MADV_RANDOM | POSIX_MADV_WILLNEED))
