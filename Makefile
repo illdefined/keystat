@@ -1,4 +1,3 @@
-CC = clang
 DESTDIR = /
 PREFIX = usr
 
