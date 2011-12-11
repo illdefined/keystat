@@ -24,7 +24,7 @@ bin    := $(DESTDIR)/$(PREFIX)/bin
 install: \
 	$(bin)/keystat-capture \
 	$(bin)/keystat-dump \
-	$(bin)/keystat-device \
+	$(bin)/keystat-service \
 	$(bin)/keystat-translate
 
 $(bin)/keystat-capture: capture $(bin)
@@ -33,7 +33,7 @@ $(bin)/keystat-capture: capture $(bin)
 $(bin)/keystat-dump: dump $(bin)
 	cp -p $< $@
 
-$(bin)/keystat-device: device.sh $(bin)
+$(bin)/keystat-service: service.sh $(bin)
 	cp -p $< $@
 
 $(bin)/keystat-translate: translate.lua $(bin)
