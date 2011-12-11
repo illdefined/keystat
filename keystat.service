@@ -3,6 +3,12 @@ Description=keystat capture service
 
 [Service]
 ExecStart=/usr/bin/keystat-service /var/lib/keystat/map
+
+CPUSchedulingPolicy=fifo
+CPUSchedulingPriority=99
+IOSchedulingClass=realtime
+IOSchedulingPriority=0
+
 StandardError=syslog
 
 [Install]

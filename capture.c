@@ -41,12 +41,6 @@ int main(int argc, char *argv[]) {
 	/* Open map file */
 	struct Cell *map = map_open(argv[1], true, false);
 
-	/* Set real-time scheduling policy */
-	struct sched_param param;
-	param.sched_priority = sched_get_priority_max(SCHED_FIFO);
-	if (sched_setscheduler(0, SCHED_FIFO, &param) == -1)
-		die("sched_setscheduler");
-
 	for (;;) {
 		do {
 			if (read(ifd, ev + idx, sizeof (struct input_event)) < sizeof (struct input_event))
