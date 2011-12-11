@@ -1,22 +1,45 @@
-DESTDIR = /
-PREFIX = usr
+CPPFLAGS ?= -pedantic-errors -Wall
+CFLAGS   ?= -pipe -Wextra -O2
 
-all: capture dump
+CPPFLAGS += -std=c99 -D_XOPEN_SOURCE=600 -ftabstop=4
+
+everything: capture dump
 
 capture: capture.c
-	$(CC) $(CFLAGS) -std=c99 -o $@ $<
-
 dump: dump.c
-	$(CC) $(CFLAGS) -std=c99 -o $@ $<
+
+%: %.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $^
+
+.c:
+	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $>
 
 clean:
 	rm -f capture dump
 
-install: all
-	install -d $(DESTDIR)$(PREFIX)/bin
-	install -T capture $(DESTDIR)$(PREFIX)/bin/keystat-capture
-	install -T dump $(DESTDIR)$(PREFIX)/bin/keystat-dump
-	install -T device.sh $(DESTDIR)$(PREFIX)/bin/keystat-device
-	install -T translate.lua $(DESTDIR)$(PREFIX)/bin/keystat-translate
+PREFIX ?= usr
+
+bin    := $(DESTDIR)/$(PREFIX)/bin
+
+install: \
+	$(bin)/keystat-capture \
+	$(bin)/keystat-dump \
+	$(bin)/keystat-device \
+	$(bin)/keystat-translate
+
+$(bin)/keystat-capture: capture $(bin)
+	cp -p $< $@
+
+$(bin)/keystat-dump: dump $(bin)
+	cp -p $< $@
+
+$(bin)/keystat-device: device.sh $(bin)
+	cp -p $< $@
+
+$(bin)/keystat-translate: translate.lua $(bin)
+	cp -p $< $@
+
+$(bin):
+	mkdir -p $@
 
 .PHONY: clean install
