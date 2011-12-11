@@ -17,15 +17,19 @@ dump: dump.c
 clean:
 	rm -f capture dump
 
-PREFIX ?= usr
+PREFIX          ?= usr
+LIBDIR          ?= lib
+SYSTEMD_UNITDIR ?= $(LIBDIR)/systemd/system
 
-bin    := $(DESTDIR)/$(PREFIX)/bin
+bin             := $(DESTDIR)/$(PREFIX)/bin
+unit            := $(DESTDIR)/$(SYSTEMD_UNITDIR)
 
 install: \
 	$(bin)/keystat-capture \
 	$(bin)/keystat-dump \
 	$(bin)/keystat-service \
-	$(bin)/keystat-translate
+	$(bin)/keystat-translate \
+	$(unit)/keystat.service
 
 $(bin)/keystat-capture: capture $(bin)
 	cp -p $< $@
@@ -39,7 +43,13 @@ $(bin)/keystat-service: service.sh $(bin)
 $(bin)/keystat-translate: translate.lua $(bin)
 	cp -p $< $@
 
+$(unit)/keystat.service: keystat.service $(unit)
+	cp -p $< $@
+
 $(bin):
+	mkdir -p $@
+
+$(unit):
 	mkdir -p $@
 
 .PHONY: clean install

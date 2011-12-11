@@ -1,0 +1,9 @@
+[Unit]
+Description=keystat capture service
+
+[Service]
+ExecStart=/usr/bin/keystat-service /var/lib/keystat/map
+StandardError=syslog
+
+[Install]
+WantedBy=multi-user.target
