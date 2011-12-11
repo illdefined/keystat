@@ -1,6 +1,3 @@
-/* For posix_(fallocate|madvise) */
-#define _XOPEN_SOURCE 600
-
 #include <arpa/inet.h>
 #include <fcntl.h>
 #include <limits.h>
