@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
 
 	for (;;) {
 		do {
-			if (read(ifd, ev + idx, sizeof (struct input_event)) < sizeof (struct input_event))
+			if (read(ifd, ev + idx, sizeof (struct input_event)) < (ssize_t) sizeof (struct input_event))
 				die("read");
 		} while (ev[idx].type != EV_KEY || ev[idx].value != 1);
 
