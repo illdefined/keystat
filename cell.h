@@ -10,7 +10,7 @@
 
 #pragma pack(push)
 #pragma pack(4)
-struct Cell {
+struct __attribute__((__packed__)) Cell {
 	uint32_t num;
 	uint32_t avg;
 };
