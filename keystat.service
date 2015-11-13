@@ -5,7 +5,8 @@ Description=keystat capture service
 ExecStart=/usr/bin/keystat-capture /var/lib/keystat/map /dev/input/by-path/platform-i8042-serio-0-event-kbd
 
 User=keystat
-Group=input
+Group=keystat
+SupplementaryGroups=input
 
 IOSchedulingClass=realtime
 IOSchedulingPriority=0
