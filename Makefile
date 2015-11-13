@@ -27,7 +27,6 @@ unit            := $(DESTDIR)/$(SYSTEMD_UNITDIR)
 install: \
 	$(bin)/keystat-capture \
 	$(bin)/keystat-dump \
-	$(bin)/keystat-service \
 	$(bin)/keystat-translate \
 	$(unit)/keystat.service
 
@@ -35,9 +34,6 @@ $(bin)/keystat-capture: capture $(bin)
 	cp -p $< $@
 
 $(bin)/keystat-dump: dump $(bin)
-	cp -p $< $@
-
-$(bin)/keystat-service: service.sh $(bin)
 	cp -p $< $@
 
 $(bin)/keystat-translate: translate.lua $(bin)
