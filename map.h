@@ -2,9 +2,6 @@
 #ifndef MAP_H
 #define MAP_H
 
-/* For posix_madvise */
-#define _XOPEN_SOURCE 600
-
 #include <sys/mman.h>
 #include <fcntl.h>
 #include <stdbool.h>
