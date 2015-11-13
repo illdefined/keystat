@@ -2,7 +2,7 @@
 Description=keystat capture service
 
 [Service]
-ExecStart=/usr/bin/keystat-service /var/lib/keystat/map
+ExecStart=/usr/bin/keystat-capture /var/lib/keystat/map /dev/input/by-path/platform-i8042-serio-0-event-kbd
 
 CapabilityBoundingSet=dac_override
 
