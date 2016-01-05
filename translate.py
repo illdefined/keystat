@@ -2,7 +2,14 @@
 # -*- coding: utf-8 -*-
 import subprocess
 import sys
-
+if len(sys.argv) >= 2:
+    try:
+        dump = open(sys.argv[1])
+    except:
+        print("usage: %s <filename>"%sys.argv[0])
+        sys.exit(1)
+else:
+    dump = sys.stdin
 positions_to_translate = [0,1,2]
 offset = -8
 keymap = subprocess.check_output(["xmodmap","-pke"]).decode("utf-8")
@@ -15,7 +22,7 @@ for line in keymap.split("\n"):
 
 table = []
 
-for line in sys.stdin:
+for line in dump:
     parts = line.split()
     if int(parts[3]) > 0:
         for position in positions_to_translate:
