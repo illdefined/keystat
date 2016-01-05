@@ -45,6 +45,7 @@ $(unit)/keystat.service: keystat.service $(unit)
 	cp -p $< $@
 
 $(env)/keystat: keystat.env $(env)
+	cp -p $< $@
 
 $(bin):
 	mkdir -p $@
