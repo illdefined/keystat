@@ -2,7 +2,8 @@
 Description=keystat capture service
 
 [Service]
-ExecStart=/usr/bin/keystat-capture /var/lib/keystat/map /dev/input/by-path/platform-i8042-serio-0-event-kbd
+EnvironmentFile=/etc/default/keystat
+ExecStart=/usr/bin/keystat-capture "${KEYSTAT_MAP}" "${KEYSTAT_DEV}"
 
 User=keystat
 Group=keystat

@@ -23,12 +23,14 @@ SYSTEMD_UNITDIR ?= $(LIBDIR)/systemd/system
 
 bin             := $(DESTDIR)/$(PREFIX)/bin
 unit            := $(DESTDIR)/$(SYSTEMD_UNITDIR)
+env             := $(DESTDIR)/etc/default
 
 install: \
 	$(bin)/keystat-capture \
 	$(bin)/keystat-dump \
 	$(bin)/keystat-translate \
-	$(unit)/keystat.service
+	$(unit)/keystat.service \
+	$(env)/keystat
 
 $(bin)/keystat-capture: capture $(bin)
 	cp -p $< $@
@@ -42,10 +44,15 @@ $(bin)/keystat-translate: translate.lua $(bin)
 $(unit)/keystat.service: keystat.service $(unit)
 	cp -p $< $@
 
+$(env)/keystat: keystat.env $(env)
+
 $(bin):
 	mkdir -p $@
 
 $(unit):
+	mkdir -p $@
+
+$(env):
 	mkdir -p $@
 
 .PHONY: clean install
