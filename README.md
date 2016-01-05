@@ -1,7 +1,7 @@
 # keystat
 Keyboard statistics generator
 
-**keystat** is a C programme to create realistic typing cost models that can be used to optimise keyboard layouts. It does so by recording the average time it takes to type a triplet of key scan codes.
+**keystat** is a C programme to create realistic typing cost models that can be used to optimise keyboard layouts. It does so by recording the average time for each sequence of three key presses (a triplet).
 
 ## Installation
 To install **keystat** simply run:
