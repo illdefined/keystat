@@ -28,8 +28,7 @@ env             := $(DESTDIR)/etc/default
 install: \
 	$(bin)/keystat-capture \
 	$(bin)/keystat-dump \
-	$(bin)/keystat-translate.lua \
-	$(bin)/keystat-translate.py \
+	$(bin)/keystat-translate \
 	$(unit)/keystat.service \
 	$(env)/keystat
 
@@ -39,10 +38,7 @@ $(bin)/keystat-capture: capture $(bin)
 $(bin)/keystat-dump: dump $(bin)
 	cp -p $< $@
 
-$(bin)/keystat-translate.lua: translate.lua $(bin)
-	cp -p $< $@
-
-$(bin)/keystat-translate.py: translate.py $(bin)
+$(bin)/keystat-translate: translate.py $(bin)
 	cp -p $< $@
 
 $(unit)/keystat.service: keystat.service $(unit)
