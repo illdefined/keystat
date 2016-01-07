@@ -3,12 +3,21 @@
 import subprocess
 import sys
 import re
+import argparse
 
-if len(sys.argv) >= 2:
+parser = argparse.ArgumentParser(description='Process some integers.')
+parser.add_argument('--keymap-source', dest='source', choices=["linux/input.h","xmodmap"],
+                   default="xmodmap",help='specify which keymap to use')
+parser.add_argument('--dumpfile', type=str, dest="dumpfile",
+                   help='the path to the dumpfile, if not specified stdin will be used')
+args = parser.parse_args()
+
+
+if args.dumpfile:
     try:
-        dump = open(sys.argv[1])
+        dump = open(args.dumpfile)
     except:
-        print("usage: %s <filename>"%sys.argv[0])
+        print("%s is not readable or does not exist."%args.dumpfile)
         sys.exit(1)
 else:
     dump = sys.stdin
@@ -38,13 +47,14 @@ def cmd_exists(cmd): # from http://stackoverflow.com/a/11069822/3890934
     return subprocess.call("type " + cmd, shell=True,
         stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0
 
-if cmd_exists("xmodmap"):
-    try:
-        mapping = load_mapping_from_xmodmap()
-    except:
-        mapping = load_mapping_from_linux_input_h()
-else:
+if args.source == "linux/input.h":
     mapping = load_mapping_from_linux_input_h()
+elif args.source == "xmodmap":
+    if cmd_exists("xmodmap"):
+        try:
+            mapping = load_mapping_from_xmodmap()
+        except:
+            print("Could not load mapping from xmodmap.")
 
 table = []
 
