@@ -55,6 +55,7 @@ elif args.source == "xmodmap":
             mapping = load_mapping_from_xmodmap()
         except:
             print("Could not load mapping from xmodmap.")
+            sys.exit(1)
 
 table = []
 
