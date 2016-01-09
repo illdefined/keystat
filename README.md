@@ -27,11 +27,18 @@ sudo keystat-dump /var/lib/keystat/map
 
 The first three columns are the scan codes of the triplet. The fourth column gives the number of times this triplet was recorded and the last one the average time it took to type it.
 
-For convenience, the `keystat-translate` tool translates the scan codes to symbolic names according to the Linux kernel headers.
-Please keep in mind that these symbolic names do not represent the actual key mappings of your specific keyboard layout but those of a standard US keyboard.
+For convenience, the `keystat-translate` tool translates the scan codes to symbolic names according to your xmodmap.
+If you haven't installed `xmodmap` you need to specify the parameter `--keymap-source=linux/input.h` to translate the scan codes according to the Linux kernel headers.
+Please keep in mind that the codes in the Linux kernel header specify the layout of a standard US keyboard.
 
 ```
 sudo keystat-dump /var/lib/keystat/map | keystat-translate
+```
+
+For easier reading pipe the content into a file (i.e. keystat.output) with:
+
+```
+sudo keystat-dump /var/lib/keystat/map | keystat-translate | while read line; do echo "$line" >> keystat.output; done
 ```
 
 The tool yields a tab-separated table with the first column being a space-separated triple of scan codes, the second the recorded number of occurrences and the third one the average time.
