@@ -34,11 +34,3 @@ Please keep in mind that the codes in the Linux kernel header specify the layout
 ```
 sudo keystat-dump /var/lib/keystat/map | keystat-translate
 ```
-
-For easier reading pipe the content into a file (i.e. keystat.output) with:
-
-```
-sudo keystat-dump /var/lib/keystat/map | keystat-translate | while read line; do echo "$line" >> keystat.output; done
-```
-
-The tool yields a tab-separated table with the first column being a space-separated triple of scan codes, the second the recorded number of occurrences and the third one the average time.
