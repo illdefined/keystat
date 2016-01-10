@@ -68,6 +68,9 @@ for line in dump:
 
 table.sort(key=lambda x: int(x[3]), reverse=True)
 
+for x in table:
+    x[3] = x[3].lstrip("0");
+
 for row in table:
     try:
         print(" ".join(row))
