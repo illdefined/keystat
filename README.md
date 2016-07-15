@@ -16,7 +16,7 @@ sudo make install
 
 On other platforms or when your primary keyboard is attached via USB, the event device specified by the variable `KEYSTAT_DEV` in the environment file `/etc/default/keystat` may have to be changed. To find the correct one, take a look into `/dev/input/by-path/` and identify those ending in `-kbd`.
 
-If there is more than one, `cat` them and see which of them generates output when you type on the keyborad.
+If there is more than one, `cat` them and see which of them generates output when you type on the keyboard.
 
 ## Output
 `keystat-capture` stores the triplet data in the map file given as first command‐line argument. This file can be inspected with `keystat‐dump`, yielding a table of space‐separated values:
