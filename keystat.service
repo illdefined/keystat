@@ -21,7 +21,7 @@ ProtectSystem=full
 ProtectHome=true
 NoNewPrivileges=true
 
-StandardError=syslog
+StandardError=journal
 
 [Install]
 WantedBy=multi-user.target
